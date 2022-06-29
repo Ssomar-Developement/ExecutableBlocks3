@@ -1,0 +1,76 @@
+name: '&e&lGenerator &6>> &aLVL 1&6'
+material: BEACON
+lore:
+- §8>> §c------------ §8<<
+- "§7You can create cool custom generator"
+- '&7with ExecutableBlocks'
+- §8>> §c------------ §8<<
+dropBlockIfItIsBroken: true
+dropBlockWhenItExplodes: true
+onlyBreakableWithEI: []
+activators:
+  activator1:
+    activator: LOOP
+    displayName: Activator name
+    commands:
+    - 'RANDOM RUN: 1'
+    - 'LOOP START: 50'
+    - minecraft:setblock %block_x_int% %block_y_int%+1 %block_z_int% stone keep
+    - LOOP END
+    - 'LOOP START: 10'
+    - minecraft:setblock %block_x_int% %block_y_int%+1 %block_z_int% iron_ore keep
+    - LOOP END
+    - 'LOOP START: 5'
+    - minecraft:setblock %block_x_int% %block_y_int%+1 %block_z_int% emerald_ore keep
+    - LOOP END
+    - 'LOOP START: 5'
+    - minecraft:setblock %block_x_int% %block_y_int%+1 %block_z_int% diamond_ore keep
+    - LOOP END
+    - 'LOOP START: 15'
+    - minecraft:setblock %block_x_int% %block_y_int%+1 %block_z_int% granite keep
+    - LOOP END
+    - 'LOOP START: 15'
+    - minecraft:setblock %block_x_int% %block_y_int%+1 %block_z_int% diorite keep
+    - LOOP END
+    - RANDOM END
+    - PARTICLE CLOUD 7 0.2 0.1
+    ownerCommands: []
+    silenceOutput: true
+    delay: 5
+    inTickDelay: true
+    cancelEventIfInvalidRequiredExecutableItems: false
+    cancelEvent: false
+  activator2:
+    activator: PLAYER_RIGHT_CLICK_ON
+    displayName: Activator name
+    commands:
+    - REMOVEBLOCK
+    - SETEXECUTABLEBLOCK Prem_Generator2 %block_x_int% %block_y_int% %block_z_int% %block_world%
+      true %player_uuid%
+    ownerCommands: []
+    silenceOutput: false
+    playerCommands: []
+    cancelEventIfInvalidRequiredExecutableItems: false
+    cancelEvent: true
+    requiredLevel: 10
+    requiredLevelMsg: '&4&lExecutableBlocks >> &cTo upgrade this generator you must
+      have &6%level% levels'
+    cancelEventIfInvalidRequiredLevel: true
+  activator3:
+    activator: PLAYER_LEFT_CLICK_ON
+    displayName: Activator name
+    commands: []
+    ownerCommands: []
+    silenceOutput: false
+    playerCommands:
+    - SENDMESSAGE §6§lExecutableBlocks >> §eThis generator is a generator §alvl 1
+    - SENDBLANKMESSAGE
+    - SENDMESSAGE §6>> §eStone §a50%
+    - SENDMESSAGE §6>> §eDiorite §a15%
+    - SENDMESSAGE §6>> §eGranite §a15%
+    - SENDMESSAGE §6>> §eIron ore §a10%
+    - SENDMESSAGE §6>> §eEmerald ore §a5%
+    - SENDMESSAGE §6>> §eDiamond ore §a5%
+    - SENDBLANKMESSAGE
+    cancelEventIfInvalidRequiredExecutableItems: false
+    cancelEvent: false

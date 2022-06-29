@@ -1,0 +1,61 @@
+name: ExecutableBlocks
+version: 2.1.5.5
+main: com.ssomar.executableblocks.ExecutableBlocks
+api-version: 1.13
+author: Ssomar
+description: Custom Items, run commands with item, send message, create boost item with delay, set cooldown !!
+depend: [SCore]
+softdepend: [ExecutableItems,PlaceholderAPI,WorldEdit,HeadDatabase,Oraxen,HolographicDisplays,ItemsAdder]
+commands:
+  eb:
+    description: eb command
+    usage: /<command> [ reload | give | giveslot | giveall | show | editor | actionbar | create | drop | clear | delete | we-place | we-remove ]
+permissions:
+  eb.*:
+   description: ExecutableBlocks permission
+   default: op
+   children:
+     eb.cmds: true
+  eb.cmds:
+   description: Allows ExecutableBlocks commands
+   default: op
+   children:
+     eb.cmd.reload: true
+     eb.cmd.give: true
+     eb.cmd.giveslot: true
+     eb.cmd.giveall: true
+     eb.cmd.show: true
+     eb.cmd.editor: true
+     eb.cmd.actionbar: true
+     eb.cmd.create: true
+     eb.cmd.drop: true
+     eb.cmd.clear: true
+     eb.cmd.delete: true
+     eb.cmd.we-place: true
+     eb.cmd.we-remove: true
+  eb.cmd.reload:
+    description: Allows the command /eb reload
+  eb.cmd.give:
+    description: Allows the command /eb give {PlayerName} {ItemID} {quantity}
+  eb.cmd.giveslot:
+    description: Allows the command /eb giveslot {playername} {id} {quantity} {slot} [usage]
+  eb.cmd.giveall:
+    description: Allows the command /eb givealll {ItemID} {quantity} [world]
+  eb.cmd.show:
+    description: Allows the command /eb show
+  eb.cmd.editor:
+    description: Allows the command /eb editor
+  eb.cmd.actionbar:
+    description: Allows the command /eb actionbar [on|off]
+  eb.cmd.create:
+    description: Allows the command /eb create {ItemID}
+  eb.cmd.drop:
+    description: Allows the command /eb drop {ItemID} {quantity} {world} {x} {y} {z}
+  eb.cmd.clear:
+    description: Allows the command /eb clear
+  eb.cmd.delete:
+    description: Allows the command /eb delete
+  eb.cmd.we-place:
+    description: Allows the command /eb we-place
+  eb.cmd.we-remove:
+    description: Allows the command /eb we-remove

@@ -1,0 +1,70 @@
+name: '&e&lGenerator &6>> &aLVL 2&6'
+material: BEACON
+lore:
+- §8>> §c------------ §8<<
+- "§7You can create cool custom generator"
+- '&7with ExecutableBlocks'
+- §8>> §c------------ §8<<
+dropBlockIfItIsBroken: true
+dropBlockWhenItExplodes: true
+onlyBreakableWithEI: []
+activators:
+  activator1:
+    activator: LOOP
+    displayName: Activator name
+    commands:
+    - 'RANDOM RUN: 1'
+    - 'LOOP START: 50'
+    - minecraft:setblock %block_x_int% %block_y_int%+1 %block_z_int% stone keep
+    - LOOP END
+    - 'LOOP START: 10'
+    - minecraft:setblock %block_x_int% %block_y_int%+1 %block_z_int% iron_block keep
+    - LOOP END
+    - 'LOOP START: 5'
+    - minecraft:setblock %block_x_int% %block_y_int%+1 %block_z_int% emerald_block
+      keep
+    - LOOP END
+    - 'LOOP START: 5'
+    - minecraft:setblock %block_x_int% %block_y_int%+1 %block_z_int% diamond_block
+      keep
+    - LOOP END
+    - 'LOOP START: 15'
+    - minecraft:setblock %block_x_int% %block_y_int%+1 %block_z_int% granite keep
+    - LOOP END
+    - 'LOOP START: 15'
+    - minecraft:setblock %block_x_int% %block_y_int%+1 %block_z_int% diorite keep
+    - LOOP END
+    - RANDOM END
+    ownerCommands: []
+    silenceOutput: true
+    delay: 5
+    inTickDelay: true
+    cancelEventIfInvalidRequiredExecutableItems: false
+    cancelEvent: false
+  activator2:
+    activator: PLAYER_RIGHT_CLICK_ON
+    displayName: Activator name
+    playerCommands:
+    - SENDMESSAGE §6§lExecutableBlocks >> §eYou have the max generator !
+    ownerCommands: []
+    silenceOutput: false
+    cancelEventIfInvalidRequiredExecutableItems: false
+    cancelEvent: true
+  activator3:
+    activator: PLAYER_LEFT_CLICK_ON
+    displayName: Activator name
+    commands: []
+    ownerCommands: []
+    silenceOutput: false
+    playerCommands:
+    - SENDMESSAGE §6§lExecutableBlocks >> §eThis generator is a generator §alvl 2
+    - SENDBLANKMESSAGE
+    - SENDMESSAGE §6>> §eStone §a50%
+    - SENDMESSAGE §6>> §eDiorite §a15%
+    - SENDMESSAGE §6>> §eGranite §a15%
+    - SENDMESSAGE §6>> §eIron block §a10%
+    - SENDMESSAGE §6>> §eEmerald block §a5%
+    - SENDMESSAGE §6>> §eDiamond block §a5%
+    - SENDBLANKMESSAGE
+    cancelEventIfInvalidRequiredExecutableItems: false
+    cancelEvent: false

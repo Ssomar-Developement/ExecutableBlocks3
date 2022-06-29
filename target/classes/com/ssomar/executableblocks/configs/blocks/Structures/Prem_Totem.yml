@@ -1,0 +1,180 @@
+name: '&e&lEpic totem'
+material: BEACON
+lore:
+- §6>> §e----------- §6<<
+- §aClick on this block
+- §awhen it is placed !
+- §aand see the custom structures !
+- §6>> §e----------- §6<<
+dropBlockIfItIsBroken: true
+dropBlockWhenItExplodes: true
+onlyBreakableWithEI: []
+activators:
+  activator3:
+    activator: LOOP
+    displayName: Activator name
+    commands:
+    - PARTICLE CLOUD 25 0.3 0.1
+    - AROUND 10 effect give %around_target% speed 1 1
+    ownerCommands: []
+    silenceOutput: true
+    delay: 5
+    inTickDelay: true
+    cancelEventIfInvalidRequiredExecutableItems: false
+    cancelEvent: false
+    conditions:
+      blockConditions:
+        blockAroundCdts:
+          bAC0:
+            southValue: 0
+            nortValue: 0
+            westValue: 0
+            eastValue: 0
+            aboveValue: 1
+            underValue: 0
+            blockMustBeExecutableBlock: []
+            blockTypeMustBe:
+            - RAW_IRON_BLOCK
+            errorMsg: '&eerror block 1'
+            northValue: 0
+          bAC1:
+            southValue: 0
+            nortValue: 0
+            westValue: 0
+            eastValue: 0
+            aboveValue: 0
+            underValue: 1
+            blockMustBeExecutableBlock: []
+            blockTypeMustBe:
+            - RAW_IRON_BLOCK
+            errorMsg: error block 1
+          bAC2:
+            southValue: 0
+            nortValue: 0
+            westValue: 1
+            eastValue: 0
+            aboveValue: 0
+            underValue: 0
+            blockMustBeExecutableBlock: []
+            blockTypeMustBe:
+            - RAW_IRON_BLOCK
+            errorMsg: error block 1
+          bAC3:
+            southValue: 0
+            nortValue: 0
+            westValue: 0
+            eastValue: 1
+            aboveValue: 0
+            underValue: 0
+            blockMustBeExecutableBlock: []
+            blockTypeMustBe:
+            - RAW_IRON_BLOCK
+            errorMsg: error block 1
+          bAC4:
+            southValue: 0
+            nortValue: 0
+            westValue: 0
+            eastValue: 0
+            aboveValue: 2
+            underValue: 0
+            blockMustBeExecutableBlock: []
+            blockTypeMustBe:
+            - RAW_GOLD_BLOCK
+            errorMsg: error block 2
+        fPlantFullyGrown: false
+        ifPlantFullyGrownMsg: '&4&l[ExecutableBlocks] &cThe plant must be fully grown
+          to active the activator: &6%activator% &cof this item!'
+        ifIsPoweredMsg: '&4&l[ExecutableBlocks] &cThe must be powered by redstone
+          to active the activator: &6%activator% &cof this item!'
+  activator2:
+    activator: LOOP
+    displayName: Activator name
+    commands:
+    - PARTICLE COMPOSTER 25 0.8 0.1
+    - AROUND 15 effect give %around_target% jump_boost 1 1
+    ownerCommands: []
+    silenceOutput: true
+    delay: 5
+    inTickDelay: true
+    cancelEventIfInvalidRequiredExecutableItems: false
+    cancelEvent: false
+    conditions:
+      blockConditions:
+        blockAroundCdts:
+          bAC0:
+            southValue: 0
+            nortValue: 0
+            westValue: 0
+            eastValue: 0
+            aboveValue: 1
+            underValue: 0
+            blockMustBeExecutableBlock: []
+            blockTypeMustBe:
+            - RAW_IRON_BLOCK
+            errorMsg: error block 1
+          bAC1:
+            southValue: 0
+            nortValue: 0
+            westValue: 0
+            eastValue: 0
+            aboveValue: 0
+            underValue: 1
+            blockMustBeExecutableBlock: []
+            blockTypeMustBe:
+            - RAW_IRON_BLOCK
+            errorMsg: error block 1
+          bAC2:
+            southValue: 0
+            nortValue: 0
+            westValue: 1
+            eastValue: 0
+            aboveValue: 0
+            underValue: 0
+            blockMustBeExecutableBlock: []
+            blockTypeMustBe:
+            - RAW_IRON_BLOCK
+            errorMsg: error block 1
+          bAC3:
+            southValue: 0
+            nortValue: 0
+            westValue: 0
+            eastValue: 1
+            aboveValue: 0
+            underValue: 0
+            blockMustBeExecutableBlock: []
+            blockTypeMustBe:
+            - RAW_IRON_BLOCK
+            errorMsg: error block 1
+          bAC4:
+            southValue: 0
+            nortValue: 0
+            westValue: 0
+            eastValue: 0
+            aboveValue: 2
+            underValue: 0
+            blockMustBeExecutableBlock: []
+            blockTypeMustBe:
+            - EMERALD_BLOCK
+            errorMsg: error block 2
+  activator1:
+    activator: PLAYER_RIGHT_CLICK_ON
+    displayName: Activator name
+    commands: []
+    ownerCommands: []
+    silenceOutput: false
+    playerCommands:
+    - SENDBLANKMESSAGE
+    - SENDCENTEREDMESSAGE §6>> §e---- §aSpecial Totem §e---- §6<<
+    - SENDBLANKMESSAGE
+    - 'SENDCENTEREDMESSAGE §6> §eStructure 1:'
+    - 'SENDCENTEREDMESSAGE §eImage: &a&oi.imgur.com/8Y4WY56.png'
+    - 'SENDCENTEREDMESSAGE §eEffect: &aSpeed 2'
+    - 'SENDCENTEREDMESSAGE §eRange: &a10 blocks'
+    - SENDBLANKMESSAGE
+    - 'SENDCENTEREDMESSAGE §6> §eStructure 2:'
+    - 'SENDCENTEREDMESSAGE §eImage: &a&oi.imgur.com/sqF3DcJ.png'
+    - 'SENDCENTEREDMESSAGE §eEffect: &aJump 2'
+    - 'SENDCENTEREDMESSAGE §eRange: &a15 blocks'
+    - SENDBLANKMESSAGE
+    cancelEventIfInvalidRequiredExecutableItems: false
+    cancelEvent: true

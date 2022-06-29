@@ -1,0 +1,17 @@
+# ----------------------------------
+# -
+#       ExecutableBlocks
+# -
+#         By: Ssomar
+# -
+# ----------------------------------
+# -
+# -
+# -
+# follow the examples below to create new Executable Block
+# Players will need permission "eb.block.<ID>" to use items in-game (ex: ei.block.mystone)
+# -
+# DISCORD HERE : https://discord.com/invite/7n8wHXu
+# -
+checkVersionMsg: true
+whitelistedWorlds: []
