@@ -26,13 +26,17 @@ public class EventsHandler {
 
         main.getServer().getPluginManager().registerEvents(new BreakExecutableBlockListener(), main);
 
-        main.getServer().getPluginManager().registerEvents(new MechanicFallBlockEvent(), main);
-
-        main.getServer().getPluginManager().registerEvents(new PistonEvents(), main);
+        main.getServer().getPluginManager().registerEvents(new CancelGravityListener(), main);
 
         main.getServer().getPluginManager().registerEvents(new BlockBelowEBBreakEvent(), main);
 
-        main.getServer().getPluginManager().registerEvents(new BurnEvent(), main);
+        main.getServer().getPluginManager().registerEvents(new EBPBurnsListerner(), main);
+
+        main.getServer().getPluginManager().registerEvents(new EBPExplodesListener(), main);
+
+        main.getServer().getPluginManager().registerEvents(new EBPMovesListener(), main);
+
+        main.getServer().getPluginManager().registerEvents(new EBPPlacementListener(), main);
 
         main.getServer().getPluginManager().registerEvents(new BlockFadeListener(), main);
 

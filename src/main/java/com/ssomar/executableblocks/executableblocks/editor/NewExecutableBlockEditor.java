@@ -33,6 +33,13 @@ public class NewExecutableBlockEditor extends FeatureEditorInterface<NewExecutab
         newExecutableBlock.getTitle().initAndUpdateItemParentEditor(this, 5);
         newExecutableBlock.getCancelGravity().initAndUpdateItemParentEditor(this, 6);
 
+        newExecutableBlock.getOnlyBreakableWithEI().initAndUpdateItemParentEditor(this, 29);
+        newExecutableBlock.getDropBlockIfItIsBroken().initAndUpdateItemParentEditor(this, 30);
+        newExecutableBlock.getDropBlockWhenItExplodes().initAndUpdateItemParentEditor(this, 31);
+        newExecutableBlock.getDropBlockWhenItBurns().initAndUpdateItemParentEditor(this, 32);
+
+        newExecutableBlock.getCanBeMoved().initAndUpdateItemParentEditor(this, 34);
+
 
         //Reset menu
         createItem(ORANGE, 1, 46, GUI.RESET, false, false, "", "&c&oClick here to reset", "&c&oall options of this block");

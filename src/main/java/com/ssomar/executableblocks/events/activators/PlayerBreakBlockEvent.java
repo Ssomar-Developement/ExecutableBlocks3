@@ -36,6 +36,7 @@ public class PlayerBreakBlockEvent{
         EventInfo eInfo = new EventInfo(e);
         eInfo.setTargetPlayer(Optional.of(target));
         eInfo.setEventCallByMineinCube(fromMineInCube);
+        eInfo.setOldMaterialBlock(Optional.of(block.getType()));
         EventsManager.getInstance().activeOption(Option.PLAYER_BREAK, eBP, eInfo);
     }
 
@@ -52,6 +53,7 @@ public class PlayerBreakBlockEvent{
 
         EventInfo eInfo = new EventInfo(e);
         eInfo.setTargetPlayer(Optional.of(target));
+        eInfo.setOldMaterialBlock(Optional.of(block.getType()));
         EventsManager.getInstance().activeOption(Option.PLAYER_BREAK, eBP, eInfo);
     }
 }

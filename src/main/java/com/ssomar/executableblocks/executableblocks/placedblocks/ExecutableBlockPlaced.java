@@ -38,6 +38,8 @@ public class ExecutableBlockPlaced implements ExecutableBlockPlacedInterface, Hi
 
 	private int usage;
 
+	private boolean isRemoved;
+
 	public ExecutableBlockPlaced(UUID id, Location location, @Nullable UUID ownerUUID, String EB_ID, int usage) {
 		super();
 		this.id = id;
@@ -45,6 +47,7 @@ public class ExecutableBlockPlaced implements ExecutableBlockPlacedInterface, Hi
 		this.ownerUUID = Optional.ofNullable(ownerUUID);
 		this.EB_ID = EB_ID;
 		this.usage = usage;
+		this.isRemoved = false;
 	}
 
 	public ExecutableBlockPlaced(Location location, @Nullable UUID ownerUUID, String EB_ID) {
@@ -54,6 +57,7 @@ public class ExecutableBlockPlaced implements ExecutableBlockPlacedInterface, Hi
 		this.ownerUUID = Optional.ofNullable(ownerUUID);
 		this.EB_ID = EB_ID;	
 		this.usage = -1;
+		this.isRemoved = false;
 	}
 
 	public void changeUsage(int usageModification) {
@@ -61,7 +65,8 @@ public class ExecutableBlockPlaced implements ExecutableBlockPlacedInterface, Hi
 
 		/* if <= 0 so we need to delete the EB placed */
 		if(usage + usageModification <= 0) {
-			ExecutableBlockPlacedManager.getInstance().removeExecutableBlockPlaced(this);
+			runBreakBlockAnimation();
+			remove();
 			Block b = this.location.getBlock();
 
 
@@ -82,7 +87,6 @@ public class ExecutableBlockPlaced implements ExecutableBlockPlacedInterface, Hi
 					b.setType(Material.AIR);
 				}
 			}.runTaskLater(ExecutableBlocks.plugin, 2L);
-
 		}
 
 		/* we just update the usage of the object */
@@ -124,22 +128,38 @@ public class ExecutableBlockPlaced implements ExecutableBlockPlacedInterface, Hi
 
 	@Override
 	public void breakBlock(@Nullable Player player, boolean drop) {
-		// TODO Check if the player has the permission to break the block
 
-		if (drop && getExecutableBlock().isDropBlockIfItIsBroken()) {
+		/* Check if the player has the perm to break this EB placed */
+		if(player != null) {
+			if(!getExecutableBlock().hasBlockPerm(player, true)) return;
+		}
+
+		/* Check if the block must be dropped if it is broken */
+		else if (drop && getExecutableBlock().getDropBlockIfItIsBroken().getValue()) {
 			ItemStack is = getExecutableBlock().buildItem(1, Optional.ofNullable(player));
 			if (player == null || (player != null && !player.getInventory().addItem(is).isEmpty())) {
 				drop(location);
 			}
 		}
+
+		runBreakBlockAnimation();
+		remove();
+	}
+
+	public void moveBlock(Location location) {
+		remove();
+		getExecutableBlock().place2(ownerUUID, location , true);
+	}
+
+	public void runBreakBlockAnimation(){
+		// TODO add sound
 		BlockData typeData = this.location.getBlock().getType().createBlockData();
 		this.location.getWorld().spawnParticle(Particle.BLOCK_CRACK, this.location, 25, 0.5, 0.5, 0.5, 1, typeData);
-		// TODO add sound
-		remove();
 	}
 
 	@Override
 	public void remove() {
+		isRemoved = true;
 		this.location.getBlock().setType(Material.AIR);
 		ExecutableBlockPlacedManager.getInstance().removeExecutableBlockPlaced(this);
 	}

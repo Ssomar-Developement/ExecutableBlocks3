@@ -5,7 +5,7 @@
 
     <groupId>com.ssomar</groupId>
     <artifactId>ExecutableBlocks</artifactId>
-    <version>2.1.5.5</version>
+    <version>3.0.0.0</version>
     <packaging>jar</packaging>
 
     <name>ExecutableBlocks</name>
@@ -249,7 +249,15 @@
         <dependency>
             <groupId>com.github.Ssomar-Developement</groupId>
             <artifactId>SCore2</artifactId>
-            <version>main-ea1d024643-1</version>
+            <version>2.0.0.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/SCore.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>item-nbt-api-plugin</artifactId>
+            <version>2.7.1</version>
             <scope>provided</scope>
         </dependency>
 

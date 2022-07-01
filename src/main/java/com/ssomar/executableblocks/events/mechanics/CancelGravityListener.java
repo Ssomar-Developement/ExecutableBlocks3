@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-public class MechanicFallBlockEvent implements Listener {
+public class CancelGravityListener implements Listener {
 
     private Map<UUID, ExecutableBlockPlaced> fallBlocks = new HashMap<>();
 

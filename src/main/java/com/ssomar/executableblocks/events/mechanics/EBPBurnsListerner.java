@@ -14,7 +14,7 @@ import org.bukkit.event.block.BlockBurnEvent;
 
 import java.util.Optional;
 
-public class BurnEvent implements Listener {
+public class EBPBurnsListerner implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockBurnEvent(BlockBurnEvent e) {
@@ -29,7 +29,7 @@ public class BurnEvent implements Listener {
             if (!eBPOpt.isPresent()) return;
             ExecutableBlockPlaced eBP = (ExecutableBlockPlaced) eBPOpt.get();
             NewExecutableBlock eB = eBP.getExecutableBlock();
-            eBP.breakBlock(null, eB.isDropBlockWhenItBurns());
+            eBP.breakBlock(null, eB.getDropBlockWhenItBurns().getValue());
         }
     }
 }

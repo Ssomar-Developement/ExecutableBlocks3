@@ -5,7 +5,7 @@ import org.bukkit.Bukkit;
 public class PlaceholderAPI {
 
 	// TRUE = FREE
-	private static final boolean placeOfWork = true;
+	private static final boolean placeOfWork = false;
 
 	public static boolean isLotOfWork() {
 		return placeOfWork;

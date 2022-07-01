@@ -42,6 +42,15 @@ public class CreationTypeFeature extends FeatureAbstract<Optional<CreationType>,
     public List<String> load(SPlugin plugin, ConfigurationSection config, boolean isPremiumLoading) {
         List<String> errors = new ArrayList<>();
         String colorStr = config.getString(this.getName(), "NULL").toUpperCase();
+        if(colorStr.equals("NULL")){
+            if(defaultValue.isPresent()) {
+                value = defaultValue;
+            } else {
+                errors.add("&cERROR, Couldn't load the CreationType value of " + this.getName() + " from config, value: " + colorStr + " &7&o" + getParent().getParentInfo() + " &6>> BASIC_CREATION, IMPORT_FROM_EXECUTABLE_ITEMS, IMPORT_FROM_ORAXEN, IMPORT_FROM_ITEMS_ADDER");
+                value = Optional.empty();
+            }
+            return errors;
+        }
         try {
             CreationType attributeSlot = CreationType.valueOf(colorStr.toUpperCase());
             value = Optional.ofNullable(attributeSlot);

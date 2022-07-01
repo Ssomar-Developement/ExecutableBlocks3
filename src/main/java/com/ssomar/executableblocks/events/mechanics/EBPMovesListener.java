@@ -16,12 +16,14 @@ import org.bukkit.event.block.BlockPistonEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class PistonEvents implements Listener {
+public class EBPMovesListener implements Listener {
 
-    private static final Boolean DEBUG = false;
+    private static final Boolean DEBUG = true;
+
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPistonExtendEvent(BlockPistonExtendEvent e) {
@@ -34,32 +36,47 @@ public class PistonEvents implements Listener {
     }
 
     public static void breakCorrectlyModifiedBlocks(List<Block> blocks, BlockPistonEvent e) {
-
+        List<Block> blocksImpactedByTheBlocksMoved = new ArrayList<>();
+        List<ExecutableBlockPlaced> eBMoved = new ArrayList<>();
         for (Block b : blocks) {
 
             SsomarDev.testMsg("PistonEvent + block: " + b.getType().name(), DEBUG);
             Location bLoc = LocationConverter.convert(b.getLocation(), false, false);
 
-
-            @SuppressWarnings("unused")
             Optional<ExecutableBlockPlacedInterface> eBPOpt = ExecutableBlockPlacedManager.getInstance().getExecutableBlockPlaced(bLoc);
             if (eBPOpt.isPresent()) {
-                e.setCancelled(true);
-                return;
-            }
-
-            for(BlockFace face : BlockFace.values()) {
-                Block block = b.getRelative(face);
-                if(block != null && block.getPistonMoveReaction().equals(PistonMoveReaction.BREAK)) {
-                    Location bLoc2 = LocationConverter.convert(block.getLocation(), false, false);
-                    Optional<ExecutableBlockPlacedInterface> eBP2Opt = ExecutableBlockPlacedManager.getInstance().getExecutableBlockPlaced(bLoc2);
-
-                    if (eBP2Opt.isPresent()) {
-                        ExecutableBlockPlaced eBP2 = (ExecutableBlockPlaced) eBP2Opt.get();
-                        eBP2.breakBlock(null, true);
-                    }
+                ExecutableBlockPlaced eBP = (ExecutableBlockPlaced) eBPOpt.get();
+                eBMoved.add(eBP);
+                if (!eBP.getExecutableBlock().getCanBeMoved().getValue()) {
+                    e.setCancelled(true);
+                    return;
                 }
             }
+
+            List<BlockFace> faces = new ArrayList<>();
+            faces.add(BlockFace.UP);
+            for (BlockFace face : faces) {
+                Block block = b.getRelative(face);
+                blocksImpactedByTheBlocksMoved.add(block);
+            }
+        }
+
+        /* Check block impacted */
+        for (Block block : blocksImpactedByTheBlocksMoved) {
+            if (block != null && block.getPistonMoveReaction().equals(PistonMoveReaction.BREAK)) {
+                Location bLoc2 = LocationConverter.convert(block.getLocation(), false, false);
+                Optional<ExecutableBlockPlacedInterface> eBP2Opt = ExecutableBlockPlacedManager.getInstance().getExecutableBlockPlaced(bLoc2);
+
+                if (eBP2Opt.isPresent()) {
+                    ExecutableBlockPlaced eBP2 = (ExecutableBlockPlaced) eBP2Opt.get();
+                    eBP2.breakBlock(null, true);
+                }
+            }
+        }
+
+        /* Move the EBP correctly */
+        for (ExecutableBlockPlaced eBP : eBMoved) {
+            eBP.moveBlock(eBP.getLocation().getBlock().getRelative(e.getDirection()).getLocation());
         }
     }
 }

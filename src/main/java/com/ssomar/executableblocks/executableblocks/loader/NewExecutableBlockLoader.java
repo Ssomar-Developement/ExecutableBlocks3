@@ -1,10 +1,10 @@
 package com.ssomar.executableblocks.executableblocks.loader;
 
+import com.ssomar.executableblocks.ExecutableBlocks;
+import com.ssomar.executableblocks.configs.api.PlaceholderAPI;
+import com.ssomar.executableblocks.executableblocks.ConfigConverter;
 import com.ssomar.executableblocks.executableblocks.NewExecutableBlock;
 import com.ssomar.executableblocks.executableblocks.manager.NewExecutableBlocksManager;
-import com.ssomar.executableitems.ExecutableItems;
-import com.ssomar.executableitems.configs.ConfigConverter4v2;
-import com.ssomar.executableitems.configs.api.PlaceholderAPI;
 import com.ssomar.score.events.loop.LoopManager;
 import com.ssomar.scoretestrecode.sobject.NewSObjectLoader;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -24,7 +24,7 @@ public class NewExecutableBlockLoader extends NewSObjectLoader<NewExecutableBloc
 
 
     public NewExecutableBlockLoader() {
-        super(ExecutableItems.plugin, "/com/ssomar/executableblocks/configs/blocks/", NewExecutableBlocksManager.getInstance(), 15);
+        super(ExecutableBlocks.plugin, "/com/ssomar/executableblocks/configs/blocks/", NewExecutableBlocksManager.getInstance(), 15);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class NewExecutableBlockLoader extends NewSObjectLoader<NewExecutableBloc
 
         this.resetCpt();
         File itemsDirectory;
-        if ((itemsDirectory = new File(ExecutableItems.getPluginSt().getDataFolder() + "/blocks")).exists()) {
+        if ((itemsDirectory = new File(ExecutableBlocks.getPluginSt().getDataFolder() + "/blocks")).exists()) {
             this.loadObjectsInFolder(itemsDirectory, !PlaceholderAPI.isLotOfWork());
         } else {
             this.createDefaultObjectsFile(!PlaceholderAPI.isLotOfWork());
@@ -112,7 +112,7 @@ public class NewExecutableBlockLoader extends NewSObjectLoader<NewExecutableBloc
 
     @Override
     public void configVersionsConverter(File file) {
-        ConfigConverter4v2.updateTo4v2(file);
+        ConfigConverter.updateTo(file);
     }
 
     @Override
@@ -120,11 +120,11 @@ public class NewExecutableBlockLoader extends NewSObjectLoader<NewExecutableBloc
 
         List<String> errors = new ArrayList<>();
         NewExecutableBlock item = new NewExecutableBlock(id, path);
-        errors.addAll(item.load(ExecutableItems.plugin, itemConfig, isPremiumLoading));
+        errors.addAll(item.load(ExecutableBlocks.plugin, itemConfig, isPremiumLoading));
 
         if (showError) {
             for (String s : errors) {
-                ExecutableItems.plugin.getServer().getLogger().severe(s);
+                ExecutableBlocks.plugin.getServer().getLogger().severe(s);
             }
         }
         return Optional.ofNullable(item);

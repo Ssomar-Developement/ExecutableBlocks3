@@ -324,7 +324,7 @@
     <dependency>
       <groupId>com.github.Ssomar-Developement</groupId>
       <artifactId>SCore2</artifactId>
-      <version>main-ea1d024643-1</version>
+      <version>main-f3e0adc1e1-1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

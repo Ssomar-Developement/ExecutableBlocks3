@@ -1,135 +1,173 @@
 package com.ssomar.executableblocks.executableblocks;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.List;
-
+import com.google.common.base.Charsets;
+import com.ssomar.executableblocks.ExecutableBlocks;
+import com.ssomar.executableitems.ExecutableItems;
+import com.ssomar.score.SCore;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.potion.PotionType;
 
-import com.google.common.base.Charsets;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 public class ConfigConverter {
 
 
-	public static void updateTo(File file) {
+    public static void updateTo(File file) {
 
-		FileConfiguration config; 
-		try {
-			config = (FileConfiguration) YamlConfiguration.loadConfiguration(file);
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-			return;
-		}
+        FileConfiguration config;
+        try {
+            config = (FileConfiguration) YamlConfiguration.loadConfiguration(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+        if (!config.contains("config_3")) {
+            NewExecutableBlock eb = new NewExecutableBlock("test", "");
+            config.set("config_3", true);
 
-		if (config.isConfigurationSection("activators")) {
-			ConfigurationSection activatorsSection = config.getConfigurationSection("activators");
-			for (String activatorID : activatorsSection.getKeys(false)) {
+            eb.getDisplayName().setValue(Optional.of(config.getString("name", "")));
+            eb.getLore().setValue(config.getStringList("lore"));
 
-				ConfigurationSection activatorSection = activatorsSection.getConfigurationSection(activatorID);
+            String mat = config.getString("material", "");
 
-				if (activatorSection.contains("entity")) {
-					List<String> entityList = activatorSection.getStringList("entity");
-					activatorSection.set("detailedEntities", entityList);
-					activatorSection.set("entity", null);
-				}
-			}
-		}
+            try {
+                eb.getMaterial().setValue(Optional.of(Material.valueOf(mat)));
+            } catch (Exception e) {
+            }
 
-		if(!config.contains("config_1_2")) {
-			if (config.isConfigurationSection("activators")) {
-				ConfigurationSection activatorsSection = config.getConfigurationSection("activators");
-				for (String activatorID : activatorsSection.getKeys(false)) {
-					ConfigurationSection activatorSection = activatorsSection.getConfigurationSection(activatorID);
-					
-					if(activatorSection.contains("commands")) {
-						List<String> commands = activatorSection.getStringList("commands");
-						for(int i = 0; i < commands.size(); i++) {
-							String command = commands.get(i);
-							if(command.startsWith("AROUND")) {
-								command = command.replaceAll("%target", "%around_target%");
-								command = command.replaceAll("%target_uuid", "%around_target_uuid%");
-								command = command.replaceAll("%target_x", "%around_target_x_int%");
-								command = command.replaceAll("%target_y", "%around_target_y_int%");
-								command = command.replaceAll("%target_z", "%around_target_z_int%");
-							}
-							command = command.replaceAll("%player%", "%owner%");
-							command = command.replaceAll("%target%", "%player%");
-							commands.set(i, command);
-						}
-						activatorSection.set("commands", commands);
+            eb.getUsage().setValue(Optional.of(config.getInt("usage", 0)));
+
+
+            if (config.isConfigurationSection("activators")) {
+                ConfigurationSection activatorsSection = config.getConfigurationSection("activators");
+                for (String activatorID : activatorsSection.getKeys(false)) {
+
+                    ConfigurationSection activatorSection = activatorsSection.getConfigurationSection(activatorID);
+                    String optionsStr = activatorSection.getString("activator", "NO_OPTION_IN_CONFIG");
+                    activatorSection.set("option", optionsStr);
+
+                    if (activatorSection.isConfigurationSection("conditions.playerConditions")) {
+                        ConfigurationSection playerConditionsSection = activatorSection.getConfigurationSection("conditions.playerConditions");
+                        activatorSection.set("playerConditions", playerConditionsSection);
+                    }
+
+					if (activatorSection.isConfigurationSection("conditions.ownerConditions")) {
+						ConfigurationSection playerConditionsSection = activatorSection.getConfigurationSection("conditions.ownerConditions");
+						activatorSection.set("ownerConditions", playerConditionsSection);
 					}
 
-					if(activatorSection.contains("playerCommands")) {
-						List<String> commands = activatorSection.getStringList("playerCommands");
-						for(int i = 0; i < commands.size(); i++) {
-							String command = commands.get(i);
-							if(command.startsWith("AROUND")) {
-								command = command.replaceAll("%target", "%around_target%");
-								command = command.replaceAll("%target_uuid", "%around_target_uuid%");
-								command = command.replaceAll("%target_x", "%around_target_x_int%");
-								command = command.replaceAll("%target_y", "%around_target_y_int%");
-								command = command.replaceAll("%target_z", "%around_target_z_int%");
-							}
-							commands.set(i, command);
-						}
-						activatorSection.set("playerCommands", commands);
+                    List<String> inplayerCdt = new ArrayList<>();
+                    inplayerCdt.add("playerConditions");
+                    inplayerCdt.add("ownerConditions");
+                    for (String s : inplayerCdt) {
+                        if (activatorSection.isConfigurationSection("conditions." + s + ".IfPlayerMustBeInHisTown")) {
+                            activatorSection.set(s + ".ifPlayerMustBeInHisTown", activatorSection.getBoolean("conditions." + s + ".IfPlayerMustBeInHisTown", false));
+                            activatorSection.set(s + ".ifPlayerMustBeInHisTownMsg", activatorSection.getString("conditions." + s + ".IfPlayerMustBeInHisTownMsg", ""));
+                            activatorSection.set(s + ".ifPlayerMustBeInHisTownCE", activatorSection.getBoolean("conditions." + s + ".IfPlayerMustBeInHisTownCE", false));
+                        }
+
+                        if (activatorSection.isConfigurationSection("conditions." + s + ".ifPlayerHasExecutableItem")) {
+                            ConfigurationSection executableItemSection = activatorSection.getConfigurationSection("conditions." + s + ".ifPlayerHasExecutableItem");
+                            for (String executableItemID : executableItemSection.getKeys(false)) {
+                                ConfigurationSection executableItemSection2 = executableItemSection.getConfigurationSection(executableItemID);
+                                activatorSection.set(s + ".ifHasExecutableItems." + executableItemID + ".executableItem", executableItemSection2.getString("executableItemID", ""));
+                                int slot = executableItemSection2.getInt("slot", -5);
+                                if (slot > -2) {
+                                    activatorSection.set(s + ".ifHasExecutableItems." + executableItemID + ".detailedSlots", new ArrayList<>(Arrays.asList(slot)));
+                                }
+                                activatorSection.set(s + ".ifHasExecutableItems." + executableItemID + ".usageCondition", executableItemSection2.getString("usageCalcul", ""));
+                            }
+                        }
+                        if (activatorSection.isConfigurationSection("conditions." + s + ".ifPlayerHasExecutableItemMsg")) {
+                            activatorSection.set(s + ".ifHasExecutableItemsMsg", activatorSection.getString("conditions." + s + ".ifPlayerHasExecutableItemMsg", ""));
+                        }
+                        if (activatorSection.isConfigurationSection("conditions." + s + ".ifPlayerHasExecutableItemCE")) {
+                            activatorSection.set(s + ".ifHasExecutableItemsCE", activatorSection.getBoolean("conditions." + s + ".ifPlayerHasExecutableItemCE", false));
+                        }
+
+                        List<String> items = activatorSection.getStringList("conditions." + s + ".ifPlayerHasItem");
+                        int j = 0;
+                        for (String item : items) {
+                            String[] itemSplit = item.split(":");
+                            if (itemSplit.length == 2) {
+                                activatorSection.set(s + ".ifHasItems.hasItem" + j + ".material", itemSplit[0]);
+                                activatorSection.set(s + ".ifHasItems.hasItem" + j + ".amount", itemSplit[1]);
+                            }
+                            j++;
+                        }
+
+                        if (activatorSection.isConfigurationSection("conditions." + s + ".ifPlayerHasItemMsg")) {
+                            activatorSection.set(s + ".ifHasItemsMsg", activatorSection.getString("conditions." + s + ".ifPlayerHasItemMsg", ""));
+                        }
+                        if (activatorSection.isConfigurationSection("conditions." + s + ".ifPlayerHasItemCE")) {
+                            activatorSection.set(s + ".ifHasItemsCE", activatorSection.getBoolean("conditions." + s + ".ifPlayerHasItemCE", false));
+                        }
+                    }
+
+                    if (activatorSection.isConfigurationSection("conditions.entityConditions")) {
+                        ConfigurationSection playerConditionsSection = activatorSection.getConfigurationSection("conditions.entityConditions");
+                        activatorSection.set("entityConditions", playerConditionsSection);
+                    }
+
+                    if (activatorSection.isConfigurationSection("conditions.worldConditions")) {
+                        ConfigurationSection playerConditionsSection = activatorSection.getConfigurationSection("conditions.worldConditions");
+                        activatorSection.set("worldConditions", playerConditionsSection);
+                    }
+
+					if (activatorSection.isConfigurationSection("conditions.blockConditions")) {
+						ConfigurationSection playerConditionsSection = activatorSection.getConfigurationSection("conditions.blockConditions");
+						activatorSection.set("blockConditions", playerConditionsSection);
 					}
-					
-					if(activatorSection.contains("ownerCommands")) {
-						List<String> commands = activatorSection.getStringList("ownerCommands");
-						for(int i = 0; i < commands.size(); i++) {
-							String command = commands.get(i);
-							if(command.startsWith("AROUND")) {
-								command = command.replaceAll("%target", "%around_target%");
-								command = command.replaceAll("%target_uuid", "%around_target_uuid%");
-								command = command.replaceAll("%target_x", "%around_target_x_int%");
-								command = command.replaceAll("%target_y", "%around_target_y_int%");
-								command = command.replaceAll("%target_z", "%around_target_z_int%");
-							}
-							command = command.replaceAll("%player%", "%owner%");
-							command = command.replaceAll("%target%", "%player%");
-							commands.set(i, command);
-						}
-						activatorSection.set("ownerCommands", commands);
-					}
 
+                    if (activatorSection.isConfigurationSection("conditions.targetBlockConditions")) {
+                        ConfigurationSection playerConditionsSection = activatorSection.getConfigurationSection("conditions.targetBlockConditions");
+                        activatorSection.set("targetBlockConditions", playerConditionsSection);
+                    }
 
+                    if (activatorSection.isConfigurationSection("conditions.placeholdersConditions")) {
+                        ConfigurationSection playerConditionsSection = activatorSection.getConfigurationSection("conditions.placeholdersConditions");
+                        activatorSection.set("placeholdersConditions", playerConditionsSection);
+                    }
 
-					if(activatorSection.contains("blockCommands")) {
-						List<String> commands = activatorSection.getStringList("blockCommands");
-						for(int i = 0; i < commands.size(); i++) {
-							String command = commands.get(i);
-							if(command.startsWith("AROUND")) {
-								command = command.replaceAll("%target", "%around_target%");
-								command = command.replaceAll("%target_uuid", "%around_target_uuid%");
-								command = command.replaceAll("%target_x", "%around_target_x_int%");
-								command = command.replaceAll("%target_y", "%around_target_y_int%");
-								command = command.replaceAll("%target_z", "%around_target_z_int%");
-							}
-							commands.set(i, command);
-						}
-						activatorSection.set("blockCommands", commands);
-					}
-				}
-			}
-			config.set("config_1_2", "true");
-			try {
-				Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8);
+                    if (activatorSection.contains("detailedBlocks")) {
+                        List<String> detailedBlocks = activatorSection.getStringList("detailedBlocks");
+                        activatorSection.set("detailedBlocks.blocks", detailedBlocks);
+                    }
+                    activatorSection.set("detailedBlocks.cancelEventIfNotValid", activatorSection.getBoolean("cancelEventIfNotDetailedBlocks", false));
 
-				try {
-					writer.write(config.saveToString());
-				} finally {
-					writer.close();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+                    if (!activatorSection.contains("detailedSlots")) {
+                        activatorSection.set("detailedSlots", new ArrayList<>(Arrays.asList(-1)));
+                    }
+                }
+            }
+
+            eb.getActivators().load(ExecutableBlocks.plugin, config, true);
+
+            for (String s : config.getKeys(false)) {
+                config.set(s, null);
+            }
+            eb.save(config);
+            config.set("config_3", true);
+
+            try {
+                Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8);
+
+                try {
+                    writer.write(config.saveToString());
+                } finally {
+                    writer.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

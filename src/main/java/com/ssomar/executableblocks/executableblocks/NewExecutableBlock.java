@@ -3,6 +3,8 @@ package com.ssomar.executableblocks.executableblocks;
 
 import com.mojang.authlib.GameProfile;
 import com.ssomar.executableblocks.ExecutableBlocks;
+import com.ssomar.executableblocks.configs.api.PlaceholderAPI;
+import com.ssomar.executableblocks.configs.messages.Message;
 import com.ssomar.executableblocks.editor.NewExecutableBlocksEditor;
 import com.ssomar.executableblocks.executableblocks.activators.NewActivatorEBFeature;
 import com.ssomar.executableblocks.executableblocks.editor.NewExecutableBlockEditor;
@@ -14,8 +16,6 @@ import com.ssomar.executableblocks.executableblocks.loader.NewExecutableBlockLoa
 import com.ssomar.executableblocks.executableblocks.placedblocks.ExecutableBlockPlaced;
 import com.ssomar.executableblocks.executableblocks.placedblocks.ExecutableBlockPlacedManager;
 import com.ssomar.executableblocks.executableblocks.placedblocks.LocationConverter;
-import com.ssomar.executableblocks.configs.api.PlaceholderAPI;
-import com.ssomar.executableblocks.configs.messages.Message;
 import com.ssomar.executableblocks.features.CreationTypeFeature;
 import com.ssomar.executableblocks.utils.CreationType;
 import com.ssomar.score.SCore;
@@ -36,6 +36,7 @@ import com.ssomar.scoretestrecode.features.custom.activators.group.ActivatorsFea
 import com.ssomar.scoretestrecode.features.custom.blocktitle.BlockTitleFeatures;
 import com.ssomar.scoretestrecode.features.types.*;
 import com.ssomar.scoretestrecode.features.types.list.ListColoredStringFeature;
+import com.ssomar.scoretestrecode.features.types.list.ListExecutableItemsFeature;
 import com.ssomar.scoretestrecode.sobject.NewSObject;
 import com.ssomar.scoretestrecode.sobject.menu.NewSObjectsManagerEditor;
 import lombok.Getter;
@@ -66,7 +67,7 @@ import java.util.*;
 
 @Getter
 @Setter
-public class NewExecutableBlock extends NewSObject<NewExecutableBlock, NewExecutableBlockEditor, NewExecutableBlockEditorManager>  implements ExecutableBlockInterface {
+public class NewExecutableBlock extends NewSObject<NewExecutableBlock, NewExecutableBlockEditor, NewExecutableBlockEditorManager> implements ExecutableBlockInterface {
 
     private String id;
     private String path;
@@ -94,13 +95,16 @@ public class NewExecutableBlock extends NewSObject<NewExecutableBlock, NewExecut
 
     private BooleanFeature cancelGravity;
 
+    private ListExecutableItemsFeature onlyBreakableWithEI;
 
-   // TODO : Add features
-    private boolean dropBlockIfItIsBroken;
-    private boolean dropBlockWhenItExplodes;
-    private boolean dropBlockWhenItBurns;
+    private BooleanFeature dropBlockIfItIsBroken;
+    private BooleanFeature dropBlockWhenItExplodes;
+    private BooleanFeature dropBlockWhenItBurns;
 
-    private List<String> onlyBreakableWithEI;
+    private BooleanFeature canBeMoved;
+
+
+    // TODO : Add features
 
     private OraxenFeatures oraxenTextures;
 
@@ -159,24 +163,26 @@ public class NewExecutableBlock extends NewSObject<NewExecutableBlock, NewExecut
         List<FeatureInterface> features = new ArrayList<FeatureInterface>();
         features.add(creationType);
 
-        if(creationType.getValue().get().equals(CreationType.BASIC_CREATION)) {
+        if (creationType.getValue().get().equals(CreationType.BASIC_CREATION)) {
             features.add(displayName);
             features.add(lore);
             features.add(material);
             features.add(spawnerType);
-        }
-        else if(creationType.getValue().get().equals(CreationType.IMPORT_FROM_ORAXEN)){
+        } else if (creationType.getValue().get().equals(CreationType.IMPORT_FROM_ORAXEN)) {
 
-        }
-        else if(creationType.getValue().get().equals(CreationType.IMPORT_FROM_EXECUTABLE_ITEMS)){
+        } else if (creationType.getValue().get().equals(CreationType.IMPORT_FROM_EXECUTABLE_ITEMS)) {
 
-        }
-        else if(creationType.getValue().get().equals(CreationType.IMPORT_FROM_ITEMS_ADDER)){
+        } else if (creationType.getValue().get().equals(CreationType.IMPORT_FROM_ITEMS_ADDER)) {
 
         }
         features.add(title);
         features.add(usage);
         features.add(cancelGravity);
+        features.add(onlyBreakableWithEI);
+        features.add(dropBlockIfItIsBroken);
+        features.add(dropBlockWhenItExplodes);
+        features.add(dropBlockWhenItBurns);
+        features.add(canBeMoved);
         features.add(activatorsFeature);
         return features;
     }
@@ -221,6 +227,11 @@ public class NewExecutableBlock extends NewSObject<NewExecutableBlock, NewExecut
             item.setTitle(title);
             item.setUsage(usage);
             item.setCancelGravity(cancelGravity);
+            item.setOnlyBreakableWithEI(onlyBreakableWithEI);
+            item.setDropBlockIfItIsBroken(dropBlockIfItIsBroken);
+            item.setDropBlockWhenItExplodes(dropBlockWhenItExplodes);
+            item.setDropBlockWhenItBurns(dropBlockWhenItBurns);
+            item.setCanBeMoved(canBeMoved);
         }
     }
 
@@ -236,6 +247,11 @@ public class NewExecutableBlock extends NewSObject<NewExecutableBlock, NewExecut
         item.setTitle(title.clone());
         item.setUsage(usage.clone());
         item.setCancelGravity(cancelGravity.clone());
+        item.setOnlyBreakableWithEI(onlyBreakableWithEI.clone());
+        item.setDropBlockIfItIsBroken(dropBlockIfItIsBroken.clone());
+        item.setDropBlockWhenItExplodes(dropBlockWhenItExplodes.clone());
+        item.setDropBlockWhenItBurns(dropBlockWhenItBurns.clone());
+        item.setCanBeMoved(canBeMoved.clone());
 
         return item;
     }
@@ -260,19 +276,16 @@ public class NewExecutableBlock extends NewSObject<NewExecutableBlock, NewExecut
         /** Otherwise theses features are not loaded since the creationType is not load when getFeatures **/
         CreationType cT = creationType.getValue().get();
 
-        if(cT.equals(CreationType.BASIC_CREATION)) {
+        if (cT.equals(CreationType.BASIC_CREATION)) {
             errors.addAll(displayName.load(sPlugin, configurationSection, b));
             errors.addAll(lore.load(sPlugin, configurationSection, b));
             errors.addAll(material.load(sPlugin, configurationSection, b));
             errors.addAll(spawnerType.load(sPlugin, configurationSection, b));
-        }
-        else if(cT.equals(CreationType.IMPORT_FROM_ORAXEN)){
+        } else if (cT.equals(CreationType.IMPORT_FROM_ORAXEN)) {
 
-        }
-        else if(cT.equals(CreationType.IMPORT_FROM_EXECUTABLE_ITEMS)){
+        } else if (cT.equals(CreationType.IMPORT_FROM_EXECUTABLE_ITEMS)) {
 
-        }
-        else if(cT.equals(CreationType.IMPORT_FROM_ITEMS_ADDER)){
+        } else if (cT.equals(CreationType.IMPORT_FROM_ITEMS_ADDER)) {
 
         }
 
@@ -305,6 +318,9 @@ public class NewExecutableBlock extends NewSObject<NewExecutableBlock, NewExecut
 
     @Override
     public void reset() {
+
+        this.creationType = new CreationTypeFeature(this, "creationType", Optional.of(CreationType.BASIC_CREATION), "CreationType", new String[]{"&7&oThe creation type"}, Material.COMPASS, false);
+
         this.activatorsFeature = new ActivatorsFeature(this, new NewActivatorEBFeature(null, "null"));
 
         this.displayName = new ColoredStringFeature(this, "name", Optional.of("&eDefault name"), "Custom name", new String[]{"&7&oThe custom name of the block"}, Material.NAME_TAG, false, false);
@@ -320,6 +336,14 @@ public class NewExecutableBlock extends NewSObject<NewExecutableBlock, NewExecut
         this.usage = new IntegerFeature(this, "usage", Optional.of(-1), "Usage", new String[]{"&7&oThe usage of the block"}, Material.BUCKET, false);
 
         this.cancelGravity = new BooleanFeature(this, "cancelGravity", false, "Cancel gravity", new String[]{"&7&oIf the block has gravity"}, Material.LEVER, false, false);
+
+        this.onlyBreakableWithEI = new ListExecutableItemsFeature(this, "onlyBreakableWithEI", new ArrayList<>(), "Only breakable with EI", new String[]{"&7&oThe list of executable items", "&7&othat can break the block"}, Material.DIAMOND_PICKAXE, false, false);
+
+        this.dropBlockIfItIsBroken = new BooleanFeature(this, "dropBlockIfItIsBroken", true, "Drop block if it is broken", new String[]{"&7&oIf the block is broken,", "&7&oit will drop the block"}, Material.LEVER, false, false);
+        this.dropBlockWhenItExplodes = new BooleanFeature(this, "dropBlockWhenItExplodes", true, "Drop block when it explodes", new String[]{"&7&oIf the block explodes,", "&7&oit will drop the block"}, Material.LEVER, false, false);
+        this.dropBlockWhenItBurns = new BooleanFeature(this, "dropBlockWhenItBurns", true, "Drop block when it burns", new String[]{"&7&oIf the block burns,", "&7&oit will drop the block"}, Material.LEVER, false, false);
+
+        this.canBeMoved = new BooleanFeature(this, "canBeMoved", true, "Can be moved", new String[]{"&7&oIf the block can be moved"}, Material.LEVER, false, false);
     }
 
 
@@ -343,41 +367,28 @@ public class NewExecutableBlock extends NewSObject<NewExecutableBlock, NewExecut
     public ItemStack buildItem(int i, Optional<Player> creatorOpt, Optional<ItemStack> itemStackOpt) {
         ItemStack item = null;
 
-        // TODO TO REWORK
-        /*
-        if (!itemStackOpt.isPresent()) {
-            Optional<ItemStack> itemsAdderItemStackOpt = itemsAdderBlockFeatures.buildItemsAdderItemStack();
-            if (itemsAdderItemStackOpt.isPresent()) item = itemsAdderItemStackOpt.get();
-
-            if (item == null) {
-                Optional<ItemStack> oraxenItemStackOpt = oraxenTextures.buildOraxenItemStack();
-                if (oraxenItemStackOpt.isPresent()) item = oraxenItemStackOpt.get();
-            }
-        }
-
-        if (executableItemsFeatures.isHasExecutableItems()) {
+        if (creationType.getValue().get().equals(CreationType.BASIC_CREATION)) {
+            if (itemStackOpt.isPresent()) item = itemStackOpt.get();
+            else item = buildBasicItem(creatorOpt);
+        } else if (creationType.getValue().get().equals(CreationType.IMPORT_FROM_ORAXEN)) {
+            /* Optional<ItemStack> oraxenItemStackOpt = oraxenTextures.buildOraxenItemStack();
+            if (oraxenItemStackOpt.isPresent()) item = oraxenItemStackOpt.get();*/
+        } else if (creationType.getValue().get().equals(CreationType.IMPORT_FROM_EXECUTABLE_ITEMS)) {
+            /* if (executableItemsFeatures.isHasExecutableItems()) {
             Optional<ExecutableItemInterface> eiOpt = ExecutableItemsAPI.getExecutableItemsManager().getExecutableItem(executableItemsFeatures.getExecutableItemsID());
             if (eiOpt.isPresent()) {
                 if (itemStackOpt.isPresent()) item = eiOpt.get().addExecutableItemInfos(itemStackOpt.get(), creatorOpt);
                 else item = eiOpt.get().buildItem(1, creatorOpt);
             }
+        }*/
+        } else if (creationType.getValue().get().equals(CreationType.IMPORT_FROM_ITEMS_ADDER)) {
+             /* Optional<ItemStack> itemsAdderItemStackOpt = itemsAdderBlockFeatures.buildItemsAdderItemStack();
+            if (itemsAdderItemStackOpt.isPresent()) item = itemsAdderItemStackOpt.get();*/
         }
 
         if (item == null) {
-            item = new ItemStack(material);
-            ItemMeta itemMeta1 = item.getItemMeta();
-            itemMeta1.setDisplayName(StringConverter.coloredString(this.name));
-            List<String> convert = new ArrayList<>();
-            for (String s : this.lore) {
-                if (creatorOpt.isPresent()) {
-                    convert.add(s.replaceAll("%player%", creatorOpt.get().getName()));
-                    continue;
-                }
-                convert.add(s);
-            }
-            itemMeta1.setLore(convert);
-            item.setItemMeta(itemMeta1);
-        }*/
+            item = buildBasicItem(creatorOpt);
+        }
 
         ItemMeta itemMeta2 = item.getItemMeta();
         NamespacedKey key2 = new NamespacedKey(ExecutableBlocks.getPluginSt(), "EB-ID");
@@ -388,6 +399,23 @@ public class NewExecutableBlock extends NewSObject<NewExecutableBlock, NewExecut
         return item;
     }
 
+    public ItemStack buildBasicItem(Optional<Player> creatorOpt) {
+        ItemStack item = new ItemStack(material.getValue().get());
+        ItemMeta itemMeta1 = item.getItemMeta();
+        itemMeta1.setDisplayName(StringConverter.coloredString(displayName.getValue().get()));
+        List<String> convert = new ArrayList<>();
+        for (String s : lore.getValue()) {
+            s = StringConverter.coloredString(s);
+            if (creatorOpt.isPresent()) {
+                convert.add(s.replaceAll("%player%", creatorOpt.get().getName()));
+                continue;
+            }
+            convert.add(s);
+        }
+        itemMeta1.setLore(convert);
+        item.setItemMeta(itemMeta1);
+        return item;
+    }
 
 
     private static void changeSkin(Block b, ItemMeta meta) {
@@ -422,7 +450,8 @@ public class NewExecutableBlock extends NewSObject<NewExecutableBlock, NewExecut
     }
 
     public void addSpawnerType(Location location) {
-        if (!creationType.getValue().get().equals(CreationType.BASIC_CREATION) || !material.getValue().get().equals(Material.SPAWNER)) return;
+        if (!creationType.getValue().get().equals(CreationType.BASIC_CREATION) || !material.getValue().get().equals(Material.SPAWNER))
+            return;
         BukkitRunnable runnable3 = new BukkitRunnable() {
             @Override
             public void run() {
@@ -435,11 +464,13 @@ public class NewExecutableBlock extends NewSObject<NewExecutableBlock, NewExecut
         runnable3.runTaskLater(SCore.plugin, 1);
     }
 
+    @Override
     public ExecutableBlockPlaced place(Optional<Player> ownerOpt, @NotNull Location location, boolean place) {
-        if(ownerOpt.isPresent()) return place2(Optional.ofNullable(ownerOpt.get().getUniqueId()), location, place);
+        if (ownerOpt.isPresent()) return place2(Optional.ofNullable(ownerOpt.get().getUniqueId()), location, place);
         else return place2(Optional.empty(), location, place);
     }
 
+    @Override
     public ExecutableBlockPlaced place2(Optional<UUID> ownerOpt, @NotNull Location location, boolean place) {
         //SsomarDev.testMsg("Loc 1: "+loc);
         Location bLoc = LocationConverter.convert(location, false, true);
@@ -479,7 +510,7 @@ public class NewExecutableBlock extends NewSObject<NewExecutableBlock, NewExecut
         StringPlaceholder placeholder = new StringPlaceholder();
         placeholder.setOwnerPlcHldr(ownerUUID);
         Location holoLoc = title.spawn(eBP.getLocation(), placeholder);
-        if(holoLoc != null) eBP.setHoloLocation(holoLoc);
+        if (holoLoc != null) eBP.setHoloLocation(holoLoc);
 
         addSpawnerType(bLoc);
 
@@ -528,14 +559,6 @@ public class NewExecutableBlock extends NewSObject<NewExecutableBlock, NewExecut
     @Override
     public ActivatorsFeature getActivators() {
         return activatorsFeature;
-    }
-
-
-    public boolean verifyOnlyBreakableWithEI(String id) {
-        for (String s : this.onlyBreakableWithEI) {
-            if (s.equalsIgnoreCase(id)) return true;
-        }
-        return false;
     }
 
     public boolean hasActiveTitle() {

@@ -60,7 +60,7 @@ public class ItemsAdderEvents implements Listener {
                 return;
             }
 
-            if (SCore.hasExecutableItems && eB.getOnlyBreakableWithEI().size() > 0) {
+            if (SCore.hasExecutableItems && eB.getOnlyBreakableWithEI().getValue().size() > 0) {
 
                 ItemStack item1 = damager.getInventory().getItemInMainHand();
                 if (item1.getType().equals(Material.AIR)) {
@@ -70,8 +70,8 @@ public class ItemsAdderEvents implements Listener {
                     e.setCancelled(true);
                     return;
                 }
-                Optional<ExecutableItemInterface> eiOpt = ExecutableItemsAPI.getExecutableItemsManager().getExecutableItem(item1);
-                if (!eiOpt.isPresent() || !eBP.getExecutableBlock().verifyOnlyBreakableWithEI(eiOpt.get().getId())) {
+
+                if(!eB.getOnlyBreakableWithEI().isValid(item1)) {
                     e.setCancelled(true);
                     return;
                 }

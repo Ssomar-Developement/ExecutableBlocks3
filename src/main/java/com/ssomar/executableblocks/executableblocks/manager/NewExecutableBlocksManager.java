@@ -13,8 +13,12 @@ import com.ssomar.score.events.loop.LoopManager;
 import com.ssomar.score.sobject.sactivator.SOption;
 import com.ssomar.scoretestrecode.features.custom.activators.activator.NewSActivator;
 import com.ssomar.scoretestrecode.sobject.NewSObjectManager;
+import de.tr7zw.nbtapi.NBTItem;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,24 +91,22 @@ public class NewExecutableBlocksManager extends NewSObjectManager<NewExecutableB
     }
 
     public Optional<ExecutableBlockInterface> getExecutableBlock(ItemStack itemStack) {
-        // TODO return Optional.ofNullable(getExecutableItem(itemStack, new ArrayList<>()));
-        return Optional.empty();
+        return Optional.ofNullable(getExecutableBlock(itemStack, new ArrayList<>()));
     }
 
-    /* @Override
+    @Override
     public List<String> getExecutableBlockIdsList() {
         List<String> list = new ArrayList<>();
         for (NewExecutableBlock item : this.getLoadedObjects()) {
             list.add(item.getId());
         }
         return list;
-    }*/
+    }
 
     /**
      * @param whiteListedID If empty, all EB are check in the recognition that takes performance (lore , name)
      **/
-    /* // TODO @Nullable
-    public NewExecutableBlock getExecutableBlock(ItemStack item) {
+    public NewExecutableBlock getExecutableBlock(ItemStack item, List<String> whiteListedID) {
 
         ItemMeta itemMeta = null;
         boolean hasItemMeta;
@@ -118,10 +120,10 @@ public class NewExecutableBlocksManager extends NewSObjectManager<NewExecutableB
         if (SCore.is1v13Less()) {
             if (item == null || item.getType() == Material.AIR) return null;
             boolean idFound = false;
-            if (ExecutableBlocks.hasNBTAPI) {
+            if (SCore.hasNBTAPI) {
                 NBTItem nbti = new NBTItem(item);
-                if (nbti.hasKey("EI-ID")) {
-                    id = nbti.getString("EI-ID");
+                if (nbti.hasKey("EB-ID")) {
+                    id = nbti.getString("EB-ID");
                     idFound = true;
                 }
             }
@@ -130,11 +132,11 @@ public class NewExecutableBlocksManager extends NewSObjectManager<NewExecutableB
         }
 
         if (!id.isEmpty()) {
-            for (NewExecutableItem infoItem : this.getAllObjects()) {
+            for (NewExecutableBlock infoItem : this.getAllObjects()) {
                 if (infoItem.getId().equals(id)) return infoItem;
             }
         }
 
         return null;
-    }*/
+    }
 }
